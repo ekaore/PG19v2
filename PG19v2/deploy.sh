@@ -170,7 +170,6 @@ generate_compose() {
     local portal=$1
     local env=$2
     local remote_path=$3
-
     local url=$(get_url $portal $env)
     local container=$(get_container_name $portal $env)
 
@@ -238,7 +237,6 @@ deploy_portal() {
     local portal=$1
     local env=$2
     local no_build=$3
-
     local worktree=$(get_worktree_path $portal)
     local remote_path=$(get_remote_path $portal $env)
     local url=$(get_url $portal $env)

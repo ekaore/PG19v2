@@ -19,9 +19,61 @@ interface ServicesContent {
 // Загружаем контент из API
 const { content, pending } = useSiteContent<{ services: ServicesContent }>('home')
 
+// Fallback данные для услуг
+const fallbackServices: ServiceItem[] = [
+  {
+    id: 'internet',
+    title: 'Интернет',
+    description: 'Мы не режем скорость. Канал до 1000 Мбит/с — вся полоса ваша',
+    icon: 'heroicons:wifi',
+    color: 'primary',
+    link: '/internet',
+    features: ['Скорость не ограничена', 'До 1000 Мбит/с', '10+ устройств']
+  },
+  {
+    id: 'tv',
+    title: 'Телевидение',
+    description: '191 канал в HD и 4К качестве. Архив передач до 14 дней',
+    icon: 'heroicons:tv',
+    color: 'secondary',
+    link: '/tv',
+    features: ['191 канал', 'HD и 4К', 'Архив 14 дней']
+  },
+  {
+    id: 'mobile',
+    title: 'Мобильная связь',
+    description: 'Выгодные тарифы для участников сообщества. Скоро!',
+    icon: 'heroicons:device-phone-mobile',
+    color: 'accent',
+    link: '/mobile',
+    features: ['Выгодные тарифы', 'Безлимит', 'Скоро'],
+    comingSoon: true
+  },
+  {
+    id: 'cctv',
+    title: 'Видеонаблюдение',
+    description: 'Облачное хранение записей. Доступ с любого устройства',
+    icon: 'heroicons:video-camera',
+    color: 'info',
+    link: '/cctv',
+    features: ['Облачное хранение', 'Доступ 24/7', 'HD камеры']
+  },
+  {
+    id: 'intercom',
+    title: 'Домофон',
+    description: 'Умный домофон с видеосвязью и управлением со смартфона',
+    icon: 'heroicons:phone',
+    color: 'secondary',
+    link: '/intercom',
+    features: ['Видеосвязь', 'Управление с телефона', 'Запись посетителей']
+  }
+]
+
 // Получаем сервисы из контента или используем fallback
 const services = computed(() => {
-  const items = content.value?.services?.items || []
+  const items = content.value?.services?.items && content.value.services.items.length > 0
+    ? content.value.services.items
+    : fallbackServices
   return items.map(item => {
     const color: string = item.color || 'primary'
     return {

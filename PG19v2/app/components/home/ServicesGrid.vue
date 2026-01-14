@@ -52,24 +52,24 @@ const chatStore = useChatStore()
 
 const colorClasses: Record<string, { icon: string; glow: string; tag: string }> = {
   primary: {
-    icon: 'text-primary',
+    icon: 'text-orange-400',
     glow: 'group-hover:shadow-glow-primary',
-    tag: 'bg-primary/10 text-primary border-primary/20'
+    tag: 'bg-yellow-500/80 text-gray-900 border-yellow-500/30'
   },
   secondary: {
-    icon: 'text-secondary',
+    icon: 'text-pink-400',
     glow: 'group-hover:shadow-glow-secondary',
-    tag: 'bg-secondary/10 text-secondary border-secondary/20'
+    tag: 'bg-pink-500/80 text-gray-900 border-pink-500/30'
   },
   accent: {
-    icon: 'text-accent',
+    icon: 'text-green-400',
     glow: 'group-hover:shadow-glow-accent',
-    tag: 'bg-accent/10 text-accent border-accent/20'
+    tag: 'bg-green-500/80 text-gray-900 border-green-500/30'
   },
   info: {
-    icon: 'text-info',
+    icon: 'text-orange-400',
     glow: 'group-hover:shadow-[0_0_30px_rgba(0,84,166,0.4)]',
-    tag: 'bg-info/10 text-info border-info/20'
+    tag: 'bg-yellow-500/80 text-gray-900 border-yellow-500/30'
   }
 }
 </script>
@@ -81,25 +81,19 @@ const colorClasses: Record<string, { icon: string; glow: string; tag: string }> 
 
     <div class="container mx-auto px-4 relative z-10">
       <!-- Header -->
-      <div class="text-center mb-8">
-        <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 mb-4 opacity-0 animate-fade-in-up">
-          <Icon name="heroicons:sparkles" class="w-4 h-4 text-primary" />
-          <span class="text-primary font-medium text-sm uppercase tracking-wider">
-            Услуги сообщества
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center gap-2 mb-4">
+          <span class="text-primary/80 font-medium text-xs uppercase tracking-wider">
+            УСЛУГИ СООБЩЕСТВА
           </span>
         </div>
-        <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] mb-6 opacity-0 animate-fade-in-up stagger-1">
-          {{ sectionTitle.split(' ').slice(0, 3).join(' ') }}
-          <span class="text-gradient-primary"> {{ sectionTitle.split(' ').slice(3).join(' ') }}</span>
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] mb-6">
+          Всё для комфортной 
+          <span class="text-gradient-primary">цифровой жизни</span>
         </h2>
-        <p class="text-lg text-[var(--text-muted)] max-w-2xl mx-auto mb-4 opacity-0 animate-fade-in-up stagger-2">
-          {{ sectionSubtitle || 'Выберите услугу, чтобы узнать подробности' }}
+        <p class="text-base md:text-lg text-[var(--text-muted)] max-w-2xl mx-auto">
+          {{ sectionSubtitle || 'Интернет, телевидение, мобильная связь и другие сервисы — всё в одном сообществе на выгодных условиях' }}
         </p>
-        <!-- Визуальная подсказка -->
-        <div class="inline-flex items-center gap-2 px-4 py-2 glass-card rounded-full opacity-0 animate-fade-in-up stagger-2">
-          <Icon name="heroicons:cursor-arrow-rays" class="w-4 h-4 text-primary" />
-          <span class="text-sm text-[var(--text-muted)]">Наведите на карточку, чтобы увидеть подробности</span>
-        </div>
       </div>
 
       <!-- Services grid -->
@@ -108,119 +102,66 @@ const colorClasses: Record<string, { icon: string; glow: string; tag: string }> 
           v-for="(service, index) in services"
           :key="service.href"
           :to="service.href"
-          class="group glass-card rounded-3xl p-8 transition-all duration-500 opacity-0 animate-fade-in-up relative hover:scale-[1.02] hover:-translate-y-1"
-          :class="[`stagger-${index + 1}`, (colorClasses[service.color] || colorClasses.primary)?.glow || '']"
+          class="group glass-card rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1"
         >
-          <!-- Icon container -->
-          <div
-            class="icon-container mb-6 group-hover:scale-110 transition-transform duration-300"
-            :class="`bg-gradient-to-br ${service.gradient}`"
-          >
+          <!-- Icon -->
+          <div class="mb-4">
             <Icon
               :name="service.icon"
-              :class="['w-7 h-7', (colorClasses[service.color] || colorClasses.primary)?.icon || '', 'group-hover:scale-110 transition-transform']"
+              :class="['w-8 h-8', (colorClasses[service.color] || colorClasses.primary)?.icon || '']"
             />
           </div>
 
           <!-- Title -->
-          <h3 class="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-primary transition-colors">
+          <h3 class="text-xl font-bold text-[var(--text-primary)] mb-3">
             {{ service.title }}
           </h3>
 
           <!-- Description -->
-          <p class="text-[var(--text-muted)] mb-6 leading-relaxed group-hover:text-[var(--text-secondary)] transition-colors">
+          <p class="text-sm text-[var(--text-muted)] mb-4 leading-relaxed">
             {{ service.description }}
           </p>
 
           <!-- Features -->
           <div class="flex flex-wrap gap-2 mb-4">
             <span
-              v-for="(feature, featureIndex) in service.features"
+              v-for="feature in service.features"
               :key="feature"
               :class="[
-                'text-xs px-3 py-1.5 rounded-full border font-medium transition-all group-hover:scale-105',
+                'text-xs px-3 py-1 rounded-full font-medium',
                 (colorClasses[service.color] || colorClasses.primary)?.tag || ''
               ]"
-              :style="{ transitionDelay: `${featureIndex * 50}ms` }"
             >
               {{ feature }}
             </span>
           </div>
 
-          <!-- Визуальные индикаторы статуса -->
-          <div class="mb-4 flex flex-wrap items-center gap-3">
-            <!-- Индикатор доступности -->
-            <div
-              v-if="!service.comingSoon"
-              class="flex items-center gap-1.5 text-xs text-accent"
-            >
-              <Icon name="heroicons:check-circle" class="w-3.5 h-3.5" />
-              <span>Доступно</span>
-            </div>
-            <!-- Индикатор популярности -->
-            <div
-              v-if="(service.id === 'internet' || service.id === 'tv') && !service.comingSoon"
-              class="flex items-center gap-1.5 text-xs text-primary"
-            >
-              <Icon name="heroicons:star" class="w-3.5 h-3.5" />
-              <span>Популярно</span>
-            </div>
-          </div>
-
-          <!-- Arrow link -->
-          <div class="flex items-center justify-between pt-4 border-t border-[var(--glass-border)]">
-            <div class="flex items-center gap-2 text-[var(--text-muted)] group-hover:text-primary transition-colors">
-              <span class="text-sm font-medium">Подробнее</span>
-              <Icon
-                name="heroicons:arrow-right"
-                class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-              />
-            </div>
-            <div
-              v-if="service.comingSoon"
-              class="px-2 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center gap-1"
-            >
-              <Icon name="heroicons:clock" class="w-3 h-3 text-orange-400" />
-              <span class="text-xs text-orange-400 font-medium">Скоро</span>
-            </div>
-          </div>
-
-          <!-- Визуальная подсказка о кликабельности -->
-          <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-            <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-              <Icon name="heroicons:cursor-arrow-rays" class="w-4 h-4 text-primary" />
-            </div>
+          <!-- Link -->
+          <div class="flex items-center gap-2 text-sm text-[var(--text-muted)] group-hover:text-primary transition-colors mt-4">
+            <span>Подробнее</span>
+            <Icon
+              name="heroicons:arrow-right"
+              class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+            />
           </div>
         </NuxtLink>
+        
+        <!-- Пустая ячейка для 6-й позиции -->
+        <div class="hidden lg:block"></div>
       </div>
 
       <!-- Bottom CTA -->
-      <div class="text-center mt-16 opacity-0 animate-fade-in-up stagger-6">
-        <div class="glass-card rounded-2xl p-6 max-w-2xl mx-auto mb-6">
-          <div class="flex items-center justify-center gap-2 mb-3">
-            <Icon name="heroicons:light-bulb" class="w-5 h-5 text-primary" />
-            <h3 class="text-lg font-semibold text-[var(--text-primary)]">Не нашли нужную услугу?</h3>
-          </div>
-          <p class="text-[var(--text-muted)] mb-4">
-            Мы постоянно расширяем возможности сообщества. Свяжитесь с нами, и мы обсудим ваши потребности.
-          </p>
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <NuxtLink
-              to="/connect"
-              class="btn-secondary inline-flex items-center gap-2"
-            >
-              <Icon name="heroicons:chat-bubble-left-right" class="w-5 h-5" />
-              <span>Связаться с нами</span>
-            </NuxtLink>
-            <button
-              @click="chatStore.open()"
-              class="btn-primary inline-flex items-center gap-2"
-            >
-              <Icon name="heroicons:phone" class="w-5 h-5" />
-              <span>Задать вопрос</span>
-            </button>
-          </div>
-        </div>
+      <div class="text-center mt-12">
+        <p class="text-[var(--text-muted)] mb-4">
+          Не нашли нужную услугу? Мы постоянно расширяем возможности
+        </p>
+        <NuxtLink
+          to="/connect"
+          class="inline-flex items-center gap-2 glass-card rounded-xl px-6 py-3 border border-[var(--glass-border)] hover:border-primary/50 transition-colors"
+        >
+          <Icon name="heroicons:chat-bubble-left-right" class="w-5 h-5" />
+          <span>Связаться с нами</span>
+        </NuxtLink>
       </div>
     </div>
   </section>

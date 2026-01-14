@@ -1,5 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 const yandexMapsApiKey = process.env.YANDEX_MAPS_API_KEY || '7a3c61c9-9e01-48b8-ad12-9a5688cc3a1b'
+const supabaseUrl = process.env.SUPABASE_URL || 'https://supabase.doka.team'
+const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJyb2xlIjogImFub24iLCAiaXNzIjogInN1cGFiYXNlIiwgImlhdCI6IDE3MzQ3ODk2MDAsICJleHAiOiAxODkyNTU2MDAwfQ.YJP-6T2G5m3ReyA1mCzzGRCzdzxWxOXwusRitdb_vp4'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -30,8 +32,8 @@ export default defineNuxtConfig({
     // Отключаем встроенный redirect - используем свой middleware
     redirect: false,
     // Явно указываем URL и ключ для модуля
-    url: process.env.SUPABASE_URL || 'https://supabase.doka.team',
-    key: process.env.SUPABASE_KEY || ''
+    url: supabaseUrl,
+    key: supabaseKey
   },
 
   runtimeConfig: {
@@ -44,8 +46,8 @@ export default defineNuxtConfig({
     beelineApiToken: process.env.BEELINE_API_TOKEN || '06f76732-9e72-4de1-b9b2-2205df8ab1ea',
     // Public (доступны и на клиенте)
     public: {
-      supabaseUrl: process.env.SUPABASE_URL || 'https://supabase.doka.team',
-      supabaseKey: process.env.SUPABASE_KEY || '',
+      supabaseUrl,
+      supabaseKey,
       telegramBotUsername: process.env.TELEGRAM_BOT_USERNAME || 'PG19CONNECTBOT',
       yandexMapsApiKey,
       beelineCallNumber: '+7 960 459-69-45'

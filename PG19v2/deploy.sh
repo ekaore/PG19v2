@@ -21,9 +21,20 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Config
-SERVER="doka-server-deploy"  # Using deploy host without LocalForward to avoid port conflicts with MCP tunnel
+SERVER="doka-server-deploy"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PORTALS="main land partner client admin tgclient"
+ENV_FILE="$SCRIPT_DIR/.env.deploy"
+
+# Load secrets from .env.deploy (required)
+if [ ! -f "$ENV_FILE" ]; then
+    echo -e "${RED}Error: $ENV_FILE not found!${NC}"
+    echo "Create it with SUPABASE_URL, SUPABASE_ANON_KEY, etc."
+    exit 1
+fi
+
+# Export all variables from .env.deploy (simple parser, no quotes support)
+export $(grep -v '^#' "$ENV_FILE" | xargs)
 
 get_worktree_path() {
     case $1 in
@@ -49,8 +60,6 @@ get_remote_path() {
 get_url() {
     local portal=$1
     local env=$2
-    # Flat subdomain scheme: pg19-{portal}.doka.team (works with Cloudflare free SSL)
-    # tgclient is prod-only with special URL
     if [ "$portal" == "tgclient" ]; then
         echo "pg19-tg.doka.team"
     elif [ "$env" == "dev" ]; then
@@ -71,7 +80,6 @@ get_url() {
 get_container_name() {
     local portal=$1
     local env=$2
-    # tgclient uses special container name
     if [ "$portal" == "tgclient" ]; then
         echo "pg19-tg"
     elif [ "$env" == "dev" ]; then
@@ -127,7 +135,6 @@ status() {
 
             printf "  %-10s → https://%s\n" "$portal" "$url"
 
-            # Check if container exists and get status
             local status=$(ssh $SERVER "docker ps -a --filter name=^${container}$ --format '{{.Status}}'" 2>/dev/null || echo "")
 
             if [[ "$status" == *"Up"* ]]; then
@@ -159,6 +166,74 @@ sync_base_layer_to_portal() {
         "$base_worktree/" "$SERVER:$remote_path/_base_layer/"
 }
 
+generate_compose() {
+    local portal=$1
+    local env=$2
+    local remote_path=$3
+
+    local url=$(get_url $portal $env)
+    local container=$(get_container_name $portal $env)
+
+    # Select bot token
+    local telegram_bot_username="PG19CONNECTBOT"
+    local telegram_bot_token="$TELEGRAM_BOT_TOKEN_MAIN"
+    if [ "$portal" == "tgclient" ]; then
+        telegram_bot_username="PG19WEBAPP_bot"
+        telegram_bot_token="$TELEGRAM_BOT_TOKEN_TG"
+    fi
+
+    # Validate required env vars
+    if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+        echo -e "${RED}Error: Missing SUPABASE_URL or SUPABASE_ANON_KEY in .env.deploy${NC}"
+        exit 1
+    fi
+
+    ssh $SERVER "cat > $remote_path/docker-compose.yml" << EOF
+services:
+  $container:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: $container
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - SUPABASE_URL=$SUPABASE_URL
+      - SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_KEY=$SUPABASE_SERVICE_KEY
+      - NUXT_SUPABASE_SERVICE_KEY=$SUPABASE_SERVICE_KEY
+      - NUXT_TELEGRAM_BOT_TOKEN=$telegram_bot_token
+      - TELEGRAM_BOT_USERNAME=$telegram_bot_username
+      - YANDEX_MAPS_API_KEY=$YANDEX_MAPS_API_KEY
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.$container.rule=Host(\`$url\`)"
+      - "traefik.http.services.$container.loadbalancer.server.port=3000"
+    networks:
+      - pg19-network
+
+networks:
+  pg19-network:
+    external: true
+EOF
+}
+
+create_compose_file() {
+    local portal=$1
+    local compose_file="$SCRIPT_DIR/deploy/docker-compose.$portal.yml"
+    mkdir -p "$(dirname "$compose_file")"
+    cat > "$compose_file" << 'EOF'
+# Auto-generated placeholder. Actual config is generated on server during deploy.
+EOF
+    echo -e "${GREEN}Created placeholder: $compose_file${NC}"
+}
+
 deploy_portal() {
     local portal=$1
     local env=$2
@@ -175,31 +250,24 @@ deploy_portal() {
     echo -e "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
     echo ""
 
-    # Verify worktree exists
     if [ ! -d "$worktree" ]; then
         echo -e "${RED}Error: Worktree not found: $worktree${NC}"
         return 1
     fi
 
-    # Verify compose file exists
     if [ ! -f "$compose_file" ]; then
-        echo -e "${YELLOW}Warning: Compose file not found: $compose_file${NC}"
-        echo -e "${YELLOW}Creating from template...${NC}"
         create_compose_file $portal
     fi
 
-    # Get current commit
     local commit=$(cd "$worktree" && git rev-parse --short HEAD)
     local branch_name=$(cd "$worktree" && git branch --show-current)
     echo -e "${YELLOW}►${NC} Branch: $branch_name @ $commit"
     echo -e "${YELLOW}►${NC} Environment: $env"
     echo ""
 
-    # Step 1: Create remote directory
     echo -e "${YELLOW}►${NC} Preparing server directory..."
     ssh $SERVER "sudo mkdir -p $remote_path && sudo chown vv:vv $remote_path"
 
-    # Step 2: Sync code
     echo -e "${YELLOW}►${NC} Syncing code to server..."
     rsync -avz --delete \
         --exclude=node_modules \
@@ -211,17 +279,14 @@ deploy_portal() {
         --exclude=_base_layer \
         "$worktree/" "$SERVER:$remote_path/"
 
-    # Step 2.1: Sync base layer for portals that extend it (client, admin, partner)
     if [[ "$portal" == "client" || "$portal" == "admin" || "$portal" == "partner" ]]; then
         sync_base_layer_to_portal "$remote_path"
     fi
 
-    # Step 3: Generate docker-compose for this environment
     echo -e "${YELLOW}►${NC} Generating Docker configs..."
     generate_compose $portal $env "$remote_path"
     scp "$worktree/Dockerfile" "$SERVER:$remote_path/Dockerfile"
 
-    # Step 4: Build and start
     if [ "$no_build" == "true" ]; then
         echo -e "${YELLOW}►${NC} Restarting container (no build)..."
         ssh $SERVER "cd $remote_path && docker compose restart"
@@ -230,7 +295,6 @@ deploy_portal() {
         ssh $SERVER "cd $remote_path && docker compose down 2>/dev/null || true && docker compose up -d --build"
     fi
 
-    # Step 5: Wait and verify
     echo -e "${YELLOW}►${NC} Waiting for container to be healthy..."
     sleep 5
 
@@ -247,75 +311,6 @@ deploy_portal() {
         echo "  ssh $SERVER 'docker logs $container'"
     fi
     echo ""
-}
-
-generate_compose() {
-    local portal=$1
-    local env=$2
-    local remote_path=$3
-
-    local url=$(get_url $portal $env)
-    local container=$(get_container_name $portal $env)
-
-    # Different bot for TWA
-    local telegram_bot="PG19CONNECTBOT"
-    local telegram_bot_token="8239443842:AAGNXne9Z8oASGk56AZRB0LxdxbJCXn6XDI"
-    if [ "$portal" == "tgclient" ]; then
-        telegram_bot="PG19WEBAPP_bot"
-        telegram_bot_token="8504219719:AAE2rJupUBYkMIuJWlLHDXExFKuXx_QlOnc"
-    fi
-
-    # Generate docker-compose.yml on the server
-    ssh $SERVER "cat > $remote_path/docker-compose.yml" << COMPOSE_EOF
-services:
-  $container:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        SUPABASE_URL: https://supabase.doka.team
-        SUPABASE_KEY: eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJyb2xlIjogImFub24iLCAiaXNzIjogInN1cGFiYXNlIiwgImlhdCI6IDE3MzQ3ODk2MDAsICJleHAiOiAxODkyNTU2MDAwfQ.YJP-6T2G5m3ReyA1mCzzGRCzdzxWxOXwusRitdb_vp4
-        TELEGRAM_BOT_USERNAME: $telegram_bot
-        YANDEX_MAPS_API_KEY: 7a3c61c9-9e01-48b8-ad12-9a5688cc3a1b
-    container_name: $container
-    restart: unless-stopped
-    environment:
-      - NODE_ENV=production
-      - SUPABASE_URL=https://supabase.doka.team
-      - SUPABASE_KEY=eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJyb2xlIjogImFub24iLCAiaXNzIjogInN1cGFiYXNlIiwgImlhdCI6IDE3MzQ3ODk2MDAsICJleHAiOiAxODkyNTU2MDAwfQ.YJP-6T2G5m3ReyA1mCzzGRCzdzxWxOXwusRitdb_vp4
-      - NUXT_TELEGRAM_BOT_TOKEN=$telegram_bot_token
-      - NUXT_SUPABASE_SERVICE_KEY=eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJyb2xlIjogInNlcnZpY2Vfcm9sZSIsICJpc3MiOiAic3VwYWJhc2UiLCAiaWF0IjogMTczNDc4OTYwMCwgImV4cCI6IDE4OTI1NTYwMDB9.pn3oy2eKMXejztAJqluImJbji4utpQOKp-7hlAN0IxM
-      - SUPABASE_SERVICE_KEY=eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJyb2xlIjogInNlcnZpY2Vfcm9sZSIsICJpc3MiOiAic3VwYWJhc2UiLCAiaWF0IjogMTczNDc4OTYwMCwgImV4cCI6IDE4OTI1NTYwMDB9.pn3oy2eKMXejztAJqluImJbji4utpQOKp-7hlAN0IxM
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000/"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 60s
-    labels:
-      - "traefik.enable=true"
-      - traefik.http.routers.$container.rule=Host(\`$url\`)
-      - "traefik.http.services.$container.loadbalancer.server.port=3000"
-    networks:
-      - pg19-network
-
-networks:
-  pg19-network:
-    external: true
-COMPOSE_EOF
-}
-
-create_compose_file() {
-    local portal=$1
-    local compose_file="$SCRIPT_DIR/deploy/docker-compose.$portal.yml"
-
-    mkdir -p "$SCRIPT_DIR/deploy"
-
-    cat > "$compose_file" << 'EOF'
-# Auto-generated compose file
-# Will be regenerated during deploy with correct environment settings
-EOF
-    echo -e "${GREEN}Created: $compose_file${NC}"
 }
 
 # Parse arguments
@@ -355,10 +350,8 @@ if [ -z "$PORTAL" ]; then
     usage
 fi
 
-# Deploy
 if [ "$PORTAL" == "all" ]; then
     for p in $PORTALS; do
-        # Skip tgclient for dev (it's prod-only)
         if [ "$p" == "tgclient" ] && [ "$ENV" == "dev" ]; then
             echo -e "${YELLOW}Skipping tgclient (prod-only portal)${NC}"
             continue
@@ -366,7 +359,6 @@ if [ "$PORTAL" == "all" ]; then
         deploy_portal $p $ENV $NO_BUILD
     done
 else
-    # Warn if trying to deploy tgclient to dev
     if [ "$PORTAL" == "tgclient" ] && [ "$ENV" == "dev" ]; then
         echo -e "${YELLOW}Warning: tgclient is designed for prod only. Deploying anyway...${NC}"
     fi

@@ -28,7 +28,10 @@ export default defineNuxtConfig({
 
   supabase: {
     // Отключаем встроенный redirect - используем свой middleware
-    redirect: false
+    redirect: false,
+    // Явно указываем URL и ключ для модуля
+    url: process.env.SUPABASE_URL || 'https://supabase.doka.team',
+    key: process.env.SUPABASE_KEY || ''
   },
 
   runtimeConfig: {

@@ -143,7 +143,7 @@ function scrollToNext() {
                     <Icon name="heroicons:bolt" class="w-4 h-4 text-primary group-hover:animate-pulse" />
                     <span>Скорость интернета</span>
                   </div>
-                  <Icon name="heroicons:sparkles" class="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Icon name="heroicons:sparkles" class="w-4 h-4 text-primary opacity-100 transition-opacity" />
                 </div>
                 <p class="text-xl md:text-2xl font-bold text-primary mb-1 group-hover:scale-105 transition-transform">
                   Без ограничений
@@ -152,7 +152,7 @@ function scrollToNext() {
                   Канал до <span class="text-[var(--text-secondary)] font-semibold">1000 Мбит/с</span> — вся скорость ваша
                 </p>
                 <!-- Визуальная подсказка -->
-                <div class="mt-3 pt-3 border-t border-[var(--glass-border)] opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="mt-3 pt-3 border-t border-[var(--glass-border)] opacity-100 transition-opacity">
                   <p class="text-xs text-[var(--text-muted)] flex items-center gap-1.5">
                     <Icon name="heroicons:light-bulb" class="w-3.5 h-3.5" />
                     <span>Скорость зависит только от вашего оборудования</span>
@@ -170,7 +170,7 @@ function scrollToNext() {
                   <p class="text-[var(--text-muted)] text-xs uppercase tracking-wider">{{ stat.label }}</p>
                   <Icon
                     :name="stat.label === 'ТВ' ? 'heroicons:tv' : 'heroicons:banknotes'"
-                    class="w-4 h-4 text-[var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity"
+                    class="w-4 h-4 text-[var(--text-muted)] opacity-100 transition-opacity"
                   />
                 </div>
                 <div class="flex items-baseline gap-2">
@@ -186,8 +186,8 @@ function scrollToNext() {
                   </span>
                   <span class="text-lg text-[var(--text-muted)]">{{ stat.unit }}</span>
                 </div>
-                <!-- Дополнительная информация при наведении -->
-                <div class="mt-3 pt-3 border-t border-[var(--glass-border)] opacity-0 group-hover:opacity-100 transition-opacity">
+                <!-- Дополнительная информация -->
+                <div class="mt-3 pt-3 border-t border-[var(--glass-border)] opacity-100 transition-opacity">
                   <p class="text-xs text-[var(--text-muted)]">
                     <span v-if="stat.label === 'ТВ'">Цифровое телевидение высокого качества</span>
                     <span v-else>Минимальный членский взнос</span>

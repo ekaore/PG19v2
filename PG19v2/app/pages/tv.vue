@@ -6,11 +6,31 @@ useHead({
 // Загружаем категории каналов из API
 const { data: channelsData } = useTvChannels()
 
+// Fallback данные для каналов
+const fallbackChannels = [
+  { name: 'Новости', icon: 'heroicons:newspaper', channel_count: 15 },
+  { name: 'Спорт', icon: 'heroicons:trophy', channel_count: 12 },
+  { name: 'Кино', icon: 'heroicons:film', channel_count: 25 },
+  { name: 'Детские', icon: 'heroicons:face-smile', channel_count: 8 },
+  { name: 'Развлекательные', icon: 'heroicons:sparkles', channel_count: 18 },
+  { name: 'Познавательные', icon: 'heroicons:academic-cap', channel_count: 10 },
+  { name: 'Музыка', icon: 'heroicons:musical-note', channel_count: 6 },
+  { name: 'Региональные', icon: 'heroicons:map-pin', channel_count: 20 },
+  { name: 'HD', icon: 'heroicons:tv', channel_count: 45 },
+  { name: '4K', icon: 'heroicons:video-camera', channel_count: 12 },
+  { name: 'Сериалы', icon: 'heroicons:play', channel_count: 8 },
+  { name: 'Документальные', icon: 'heroicons:document-text', channel_count: 12 }
+]
+
 // Преобразуем в формат для отображения
 const channels = computed(() => {
-  return (channelsData.value || []).map(c => ({
+  const data = channelsData.value && channelsData.value.length > 0
+    ? channelsData.value
+    : fallbackChannels
+  
+  return data.map(c => ({
     category: c.name,
-    count: c.count,
+    count: c.count || c.channel_count,
     icon: c.icon
   }))
 })

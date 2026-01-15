@@ -87,7 +87,7 @@ function scrollToNext() {
             <div class="mb-6 opacity-0 animate-fade-in-up stagger-2 flex flex-wrap gap-2 justify-center lg:justify-start">
               <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-accent/10 text-accent border border-accent/20">
                 <Icon name="heroicons:check" class="w-3.5 h-3.5" />
-                <span>БЕЗ ОГРАНИЧЕНИЙ</span>
+                <span>Без ограничений</span>
               </span>
               <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary/10 text-primary border border-primary/20">
                 <Icon name="heroicons:check" class="w-3.5 h-3.5" />

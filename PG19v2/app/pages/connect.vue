@@ -164,19 +164,19 @@ const resetForm = () => {
                   <p class="text-sm text-orange-400 font-medium mb-1">Адрес вне зоны покрытия</p>
                   <p class="text-xs text-[var(--text-muted)]">
                     Мы обязательно рассмотрим возможность подключения и свяжемся с вами для обсуждения вариантов.
-                  </p>
+              </p>
                 </div>
               </div>
             </div>
 
             <!-- Действия -->
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-              <a
-                href="https://pg19-client.doka.team"
+            <a
+              href="https://pg19-client.doka.team"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="group btn-primary inline-flex items-center gap-3 px-8 py-4 text-lg relative overflow-hidden"
-              >
+            >
                 <Icon name="heroicons:clipboard-document-list" class="w-5 h-5 relative z-10" />
                 <span class="relative z-10">Отследить статус заявки</span>
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
@@ -431,7 +431,7 @@ const resetForm = () => {
                 class="w-full btn-primary flex items-center justify-center gap-3 py-5 text-lg disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
               >
                 <span class="relative z-10 flex items-center gap-3">
-                  <Icon v-if="isSubmitting" name="heroicons:arrow-path" class="w-5 h-5 animate-spin" />
+                <Icon v-if="isSubmitting" name="heroicons:arrow-path" class="w-5 h-5 animate-spin" />
                   <Icon v-else-if="isFormValid" name="heroicons:paper-airplane" class="w-5 h-5" />
                   <span>{{ isSubmitting ? 'Отправка...' : isFormValid ? 'Отправить заявку' : 'Заполните все поля' }}</span>
                 </span>

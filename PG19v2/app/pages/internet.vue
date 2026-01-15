@@ -33,6 +33,69 @@ const features = computed(() => content.value?.features?.items || [
 ])
 
 const equipment = computed(() => content.value?.features?.equipment?.router)
+
+// FAQ данные
+const faqItems = [
+  {
+    question: 'Какая реальная скорость интернета?',
+    answer: 'Скорость зависит от вашего оборудования и расстояния до точки доступа. Максимальная скорость канала — до 1000 Мбит/с. Мы не ограничиваем скорость искусственно.'
+  },
+  {
+    question: 'Нужно ли покупать роутер?',
+    answer: 'Нет, роутер можно взять в аренду за 99 ₽/мес или использовать свой совместимый роутер. Настройка включена в стоимость.'
+  },
+  {
+    question: 'Сколько устройств можно подключить?',
+    answer: 'Ограничений по количеству устройств нет. Рекомендуется до 10 устройств для стабильной работы, но можно и больше.'
+  },
+  {
+    question: 'Есть ли ограничения по трафику?',
+    answer: 'Нет, трафик безлимитный. Вы можете использовать интернет без ограничений по объему данных.'
+  },
+  {
+    question: 'Как быстро происходит подключение?',
+    answer: 'Обычно подключение занимает 1-3 рабочих дня после подачи заявки, в зависимости от технических возможностей.'
+  },
+  {
+    question: 'Что делать при проблемах со связью?',
+    answer: 'Свяжитесь с нами через чат на сайте или Telegram. Мы оперативно решаем технические вопросы.'
+  }
+]
+
+// Пошаговая инструкция
+const steps = [
+  {
+    icon: 'heroicons:document-text',
+    title: 'Подайте заявку',
+    description: 'Заполните форму подключения на сайте или свяжитесь с нами'
+  },
+  {
+    icon: 'heroicons:check-badge',
+    title: 'Проверка возможности',
+    description: 'Мы проверим техническую возможность подключения по вашему адресу'
+  },
+  {
+    icon: 'heroicons:calendar',
+    title: 'Согласование даты',
+    description: 'Согласуем удобное время для установки оборудования'
+  },
+  {
+    icon: 'heroicons:wrench-screwdriver',
+    title: 'Установка',
+    description: 'Наш специалист установит и настроит оборудование'
+  },
+  {
+    icon: 'heroicons:check-circle',
+    title: 'Готово!',
+    description: 'Интернет готов к использованию. При необходимости поможем с настройкой'
+  }
+]
+
+const activeFaq = ref<number | null>(null)
+
+function toggleFaq(index: number) {
+  activeFaq.value = activeFaq.value === index ? null : index
+}
 </script>
 
 <template>
@@ -128,16 +191,16 @@ const equipment = computed(() => content.value?.features?.equipment?.router)
     </section>
 
     <!-- Equipment -->
-    <section class="py-20 md:py-32 mesh-gradient-dark relative overflow-hidden">
+    <section class="py-12 md:py-16 mesh-gradient-dark relative overflow-hidden">
       <div class="floating-shape w-[400px] h-[400px] bg-primary/10 -bottom-32 -left-32"></div>
       
       <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center mb-8">
-          <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 mb-4">
+        <div class="text-center mb-6">
+          <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 mb-3">
             <Icon name="heroicons:cog-6-tooth" class="w-4 h-4 text-primary" />
             <span class="text-primary font-medium text-sm uppercase tracking-wider">Оборудование</span>
           </div>
-          <h2 class="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-4">
+          <h2 class="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-3">
             Нужен роутер?
           </h2>
           <p class="text-lg text-[var(--text-muted)] max-w-2xl mx-auto">
@@ -146,13 +209,13 @@ const equipment = computed(() => content.value?.features?.equipment?.router)
         </div>
 
         <div class="max-w-2xl mx-auto">
-          <div class="glass-card rounded-3xl p-8 group hover:scale-[1.02] transition-all duration-300 relative overflow-hidden">
+          <div class="glass-card rounded-3xl p-6 group hover:scale-[1.02] transition-all duration-300 relative overflow-hidden">
             <!-- Glow effect -->
             <div class="absolute -inset-1 bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 rounded-[32px] blur-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10"></div>
             
-            <div class="flex flex-col md:flex-row items-start gap-6">
-              <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                <Icon name="heroicons:wifi" class="w-12 h-12 text-primary" />
+            <div class="flex flex-col md:flex-row items-start gap-4">
+              <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <Icon name="heroicons:wifi" class="w-10 h-10 text-primary" />
               </div>
               <div class="flex-grow">
                 <div class="flex items-center gap-2 mb-2">
@@ -163,12 +226,12 @@ const equipment = computed(() => content.value?.features?.equipment?.router)
                     Рекомендуется
                   </span>
                 </div>
-                <p class="text-[var(--text-muted)] mb-4">
+                <p class="text-[var(--text-muted)] mb-3">
                   {{ equipment?.description || 'Двухдиапазонный роутер с поддержкой Wi-Fi 5' }}
                 </p>
                 
                 <!-- Характеристики -->
-                <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="grid grid-cols-2 gap-2 mb-3">
                   <div class="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                     <Icon name="heroicons:check-circle" class="w-4 h-4 text-accent" />
                     <span>Wi-Fi 5 (802.11ac)</span>
@@ -187,7 +250,7 @@ const equipment = computed(() => content.value?.features?.equipment?.router)
                   </div>
                 </div>
 
-                <div class="flex items-baseline gap-2 pt-4 border-t border-[var(--glass-border)]">
+                <div class="flex items-baseline gap-2 pt-3 border-t border-[var(--glass-border)]">
                   <p class="text-3xl font-bold text-primary">
                     +{{ equipment?.price_monthly || 99 }}
                   </p>
@@ -196,11 +259,173 @@ const equipment = computed(() => content.value?.features?.equipment?.router)
                 </div>
 
                 <!-- Подсказка -->
-                <div class="mt-4 flex items-center gap-2 text-xs text-[var(--text-muted)]">
+                <div class="mt-3 flex items-center gap-2 text-xs text-[var(--text-muted)]">
                   <Icon name="heroicons:information-circle" class="w-4 h-4" />
                   <span>Можно использовать свой роутер, совместимый с нашим оборудованием</span>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How to Connect -->
+    <section class="py-12 md:py-16" :style="{ background: 'var(--bg-base)' }">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+          <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 mb-4">
+            <Icon name="heroicons:arrow-path" class="w-4 h-4 text-primary" />
+            <span class="text-primary font-medium text-sm uppercase tracking-wider">Как подключиться</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-4">
+            Простой процесс подключения
+          </h2>
+          <p class="text-lg text-[var(--text-muted)] max-w-2xl mx-auto">
+            Всего 5 простых шагов до высокоскоростного интернета
+          </p>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+          <div class="relative">
+            <!-- Vertical timeline line -->
+            <div class="hidden md:block absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/30 via-primary/50 to-primary/30"></div>
+            
+            <div class="space-y-8">
+              <div
+                v-for="(step, index) in steps"
+                :key="step.title"
+                class="relative opacity-0 animate-fade-in-up"
+                :class="`stagger-${index + 1}`"
+              >
+                <!-- Timeline dot -->
+                <div class="hidden md:block absolute left-8 top-8 w-4 h-4 rounded-full bg-primary border-4 border-[var(--bg-base)] transform -translate-x-1/2 z-10 shadow-lg shadow-primary/30"></div>
+                
+                <!-- Content card -->
+                <div class="md:ml-20 glass-card rounded-2xl p-6 md:p-8 group hover:scale-[1.02] transition-all duration-300 relative overflow-hidden">
+                  <!-- Gradient glow on hover -->
+                  <div class="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10"></div>
+                  
+                  <div class="flex flex-col md:flex-row items-start gap-6">
+                    <!-- Icon -->
+                    <div class="flex-shrink-0">
+                      <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center group-hover:scale-110 group-hover:from-primary/30 group-hover:to-primary/10 transition-all duration-300">
+                        <Icon :name="step.icon" class="w-8 h-8 text-primary" />
+                      </div>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="flex-1">
+                      <div class="flex items-center gap-3 mb-3">
+                        <span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20">
+                          Шаг {{ index + 1 }}
+                        </span>
+                        <h3 class="text-xl font-bold text-[var(--text-primary)] group-hover:text-primary transition-colors">
+                          {{ step.title }}
+                        </h3>
+                      </div>
+                      <p class="text-[var(--text-muted)] leading-relaxed mb-4">
+                        {{ step.description }}
+                      </p>
+                      
+                      <!-- Additional info for specific steps -->
+                      <div
+                        v-if="index === 0"
+                        class="flex items-center gap-2 text-sm text-accent bg-accent/10 px-3 py-2 rounded-lg border border-accent/20"
+                      >
+                        <Icon name="heroicons:clock" class="w-4 h-4" />
+                        <span>Заполнение займет 2-3 минуты</span>
+                      </div>
+                      <div
+                        v-if="index === 1"
+                        class="flex items-center gap-2 text-sm text-accent bg-accent/10 px-3 py-2 rounded-lg border border-accent/20"
+                      >
+                        <Icon name="heroicons:check-badge" class="w-4 h-4" />
+                        <span>Проверка занимает 1 рабочий день</span>
+                      </div>
+                      <div
+                        v-if="index === 2"
+                        class="flex items-center gap-2 text-sm text-accent bg-accent/10 px-3 py-2 rounded-lg border border-accent/20"
+                      >
+                        <Icon name="heroicons:calendar" class="w-4 h-4" />
+                        <span>Удобное время для вас</span>
+                      </div>
+                      <div
+                        v-if="index === 3"
+                        class="flex items-center gap-2 text-sm text-accent bg-accent/10 px-3 py-2 rounded-lg border border-accent/20"
+                      >
+                        <Icon name="heroicons:wrench-screwdriver" class="w-4 h-4" />
+                        <span>Установка занимает 30-60 минут</span>
+                      </div>
+                      <div
+                        v-if="index === 4"
+                        class="flex items-center gap-2 text-sm text-accent bg-accent/10 px-3 py-2 rounded-lg border border-accent/20"
+                      >
+                        <Icon name="heroicons:sparkles" class="w-4 h-4" />
+                        <span>Интернет готов к использованию!</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- CTA Button -->
+          <div class="text-center mt-12">
+            <NuxtLink
+              to="/connect"
+              class="group btn-primary inline-flex items-center gap-3 px-8 py-4 text-lg relative overflow-hidden"
+            >
+              <span class="relative z-10">Начать подключение</span>
+              <Icon name="heroicons:arrow-right" class="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" />
+              <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+            </NuxtLink>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-12 md:py-16 mesh-gradient-dark relative overflow-hidden">
+      <div class="floating-shape w-[400px] h-[400px] bg-secondary/10 -bottom-32 -left-32"></div>
+      
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-12">
+          <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 mb-4">
+            <Icon name="heroicons:question-mark-circle" class="w-4 h-4 text-primary" />
+            <span class="text-primary font-medium text-sm uppercase tracking-wider">Частые вопросы</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-4">
+            Ответы на популярные вопросы
+          </h2>
+        </div>
+
+        <div class="max-w-3xl mx-auto space-y-4">
+          <div
+            v-for="(item, index) in faqItems"
+            :key="index"
+            class="glass-card rounded-2xl overflow-hidden transition-all duration-300"
+            :class="activeFaq === index ? 'ring-2 ring-primary/50' : ''"
+          >
+            <button
+              @click="toggleFaq(index)"
+              class="w-full p-6 text-left flex items-center justify-between gap-4 group"
+            >
+              <span class="font-semibold text-[var(--text-primary)] group-hover:text-primary transition-colors">
+                {{ item.question }}
+              </span>
+              <Icon
+                :name="activeFaq === index ? 'heroicons:chevron-up' : 'heroicons:chevron-down'"
+                class="w-5 h-5 text-[var(--text-muted)] flex-shrink-0 transition-transform"
+                :class="activeFaq === index ? 'rotate-180' : ''"
+              />
+            </button>
+            <div
+              v-show="activeFaq === index"
+              class="px-6 pb-6 text-[var(--text-muted)] leading-relaxed animate-fade-in"
+            >
+              {{ item.answer }}
             </div>
           </div>
         </div>

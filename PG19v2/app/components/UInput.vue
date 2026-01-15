@@ -47,22 +47,22 @@ const hasValue = computed(() => {
       <div v-if="icon" class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
         <Icon :name="icon" class="w-5 h-5 text-[var(--text-muted)]" />
       </div>
-      <input
-        v-model="inputValue"
-        :type="type"
-        :placeholder="placeholder"
-        :disabled="disabled"
-        class="w-full px-4 py-3 rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+    <input
+      v-model="inputValue"
+      :type="type"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      class="w-full px-4 py-3 rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         :class="{
           'border-red-500 focus:border-red-500 focus:ring-red-500/20': error,
           'border-accent/50 focus:border-accent': hasValue && !error,
           'pl-11': icon
         }"
-        :style="{
-          background: 'var(--glass-bg)',
+      :style="{
+        background: 'var(--glass-bg)',
           border: error ? '1px solid rgb(239 68 68)' : hasValue && !error ? '1px solid rgba(0, 166, 81, 0.5)' : '1px solid var(--glass-border)'
-        }"
-      />
+      }"
+    />
       <!-- Визуальный индикатор валидности -->
       <div
         v-if="hasValue && !error"

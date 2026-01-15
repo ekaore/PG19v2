@@ -78,14 +78,14 @@ async function subscribeToNotifications() {
           <div class="text-center mb-8">
             <div class="w-24 h-24 glass-card rounded-3xl flex items-center justify-center mx-auto mb-8 group hover:scale-110 transition-transform">
               <Icon name="heroicons:signal" class="w-12 h-12 text-accent group-hover:animate-pulse" />
-            </div>
-            <h2 class="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-4">
-              Мы работаем над этим
-            </h2>
+          </div>
+          <h2 class="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-4">
+            Мы работаем над этим
+          </h2>
             <p class="text-[var(--text-muted)] mb-8 text-lg">
-              Услуга мобильной связи находится в разработке.
-              Оставьте заявку, и мы сообщим вам о запуске.
-            </p>
+            Услуга мобильной связи находится в разработке.
+            Оставьте заявку, и мы сообщим вам о запуске.
+          </p>
           </div>
 
           <!-- Форма подписки на уведомления -->
@@ -142,21 +142,21 @@ async function subscribeToNotifications() {
           <!-- Альтернативный CTA -->
           <div class="text-center">
             <p class="text-[var(--text-muted)] mb-4">Или оставьте полную заявку на подключение</p>
-            <NuxtLink
-              to="/connect"
+          <NuxtLink
+            to="/connect"
               class="group btn-primary inline-flex items-center gap-3 px-8 py-4 text-lg relative overflow-hidden"
-            >
+          >
               <span class="relative z-10">Оставить заявку</span>
               <Icon name="heroicons:arrow-right" class="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" />
               <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-            </NuxtLink>
+          </NuxtLink>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Планируемые возможности -->
-    <section class="py-20 md:py-32 mesh-gradient-dark relative overflow-hidden">
+    <section class="py-16 mesh-gradient-dark relative overflow-hidden">
       <div class="floating-shape w-[400px] h-[400px] bg-accent/10 -bottom-32 -left-32"></div>
       
       <div class="container mx-auto px-4 relative z-10">

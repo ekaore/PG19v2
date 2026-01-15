@@ -154,8 +154,19 @@ const colorClasses: Record<string, { icon: string; glow: string; tag: string }> 
           v-for="(service, index) in services"
           :key="service.href"
           :to="service.href"
-          class="group glass-card rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1"
+          class="group glass-card rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 relative"
         >
+          <!-- Coming Soon Badge -->
+          <div
+            v-if="service.comingSoon"
+            class="absolute top-4 right-4 z-10"
+          >
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-accent/20 text-accent border border-accent/40 backdrop-blur-sm">
+              <Icon name="heroicons:clock" class="w-3.5 h-3.5" />
+              <span>Скоро</span>
+            </span>
+          </div>
+
           <!-- Icon -->
           <div class="mb-4">
             <Icon

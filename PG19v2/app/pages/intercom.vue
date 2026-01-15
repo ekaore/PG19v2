@@ -103,7 +103,7 @@ const features = [
     </section>
 
     <!-- Benefits -->
-    <section class="py-20 md:py-32 mesh-gradient-dark relative overflow-hidden">
+    <section class="py-16 mesh-gradient-dark relative overflow-hidden">
       <div class="floating-shape w-[400px] h-[400px] bg-primary/10 -bottom-32 -left-32"></div>
       
       <div class="container mx-auto px-4 relative z-10">

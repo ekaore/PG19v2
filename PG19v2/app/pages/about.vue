@@ -9,6 +9,82 @@ const values = [
   { icon: 'heroicons:scale', title: 'Равноправие', description: 'Каждый участник имеет равные права' },
   { icon: 'heroicons:users', title: 'Сообщество', description: 'Вместе мы сильнее и эффективнее' }
 ]
+
+// Статистика
+const stats = [
+  { value: '100 000+', label: 'Участников', icon: 'heroicons:users', color: 'primary' },
+  { value: '8+', label: 'Лет работы', icon: 'heroicons:calendar', color: 'secondary' },
+  { value: '1000', label: 'Мбит/с скорость', icon: 'heroicons:bolt', color: 'accent' },
+  { value: '24/7', label: 'Поддержка', icon: 'heroicons:chat-bubble-left-right', color: 'info' }
+]
+
+// Пошаговая инструкция вступления
+const joinSteps = [
+  {
+    icon: 'heroicons:document-text',
+    title: 'Подайте заявку',
+    description: 'Заполните форму на сайте или свяжитесь с нами'
+  },
+  {
+    icon: 'heroicons:check-badge',
+    title: 'Проверка возможности',
+    description: 'Мы проверим техническую возможность подключения'
+  },
+  {
+    icon: 'heroicons:document-duplicate',
+    title: 'Оформление документов',
+    description: 'Подписание договора и вступление в кооператив'
+  },
+  {
+    icon: 'heroicons:calendar',
+    title: 'Согласование даты',
+    description: 'Согласуем удобное время для установки'
+  },
+  {
+    icon: 'heroicons:wrench-screwdriver',
+    title: 'Подключение',
+    description: 'Установка оборудования и настройка услуг'
+  },
+  {
+    icon: 'heroicons:check-circle',
+    title: 'Вы участник!',
+    description: 'Добро пожаловать в сообщество ПЖ19'
+  }
+]
+
+// FAQ
+const faqItems = [
+  {
+    question: 'Как стать участником сообщества?',
+    answer: 'Подайте заявку на подключение через форму на сайте. После проверки технической возможности мы свяжемся с вами для оформления документов.'
+  },
+  {
+    question: 'Сколько стоит членский взнос?',
+    answer: 'Минимальный членский взнос составляет 699 ₽/мес. Точная сумма зависит от вашей локации и выбранных услуг.'
+  },
+  {
+    question: 'Можно ли выйти из сообщества?',
+    answer: 'Да, вы можете выйти из кооператива в любое время, подав соответствующее заявление. Оборудование остается вашей собственностью.'
+  },
+  {
+    question: 'Как принимаются решения в сообществе?',
+    answer: 'Все важные решения принимаются на общих собраниях участников. Один пайщик = один голос. Протоколы собраний доступны всем участникам.'
+  },
+  {
+    question: 'Куда идут членские взносы?',
+    answer: 'Все средства расходуются строго на содержание и развитие инфраструктуры: оплата каналов связи, обслуживание оборудования, развитие сети.'
+  },
+  {
+    question: 'Есть ли ограничения по скорости?',
+    answer: 'Нет, мы не ограничиваем скорость искусственно. Вы получаете максимальную скорость, доступную в вашей точке подключения (до 1000 Мбит/с).'
+  }
+]
+
+const activeFaq = ref<number | null>(null)
+
+function toggleFaq(index: number) {
+  activeFaq.value = activeFaq.value === index ? null : index
+}
 </script>
 
 <template>
@@ -128,22 +204,192 @@ const values = [
       </div>
     </section>
 
+    <!-- Stats -->
+    <section class="py-12 md:py-16 mesh-gradient-dark relative overflow-hidden">
+      <div class="floating-shape w-[400px] h-[400px] bg-primary/10 -top-32 -right-32"></div>
+      
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-12">
+          <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 mb-4">
+            <Icon name="heroicons:chart-bar" class="w-4 h-4 text-primary" />
+            <span class="text-primary font-medium text-sm uppercase tracking-wider">Статистика</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-4">
+            ПЖ19 в цифрах
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          <div
+            v-for="(stat, index) in stats"
+            :key="stat.label"
+            class="glass-card rounded-2xl p-6 text-center group hover:scale-105 transition-all duration-300 opacity-0 animate-fade-in-up"
+            :class="`stagger-${index + 1}`"
+          >
+            <div
+              class="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform"
+              :class="{
+                'bg-gradient-to-br from-primary/20 to-primary/5': stat.color === 'primary',
+                'bg-gradient-to-br from-secondary/20 to-secondary/5': stat.color === 'secondary',
+                'bg-gradient-to-br from-accent/20 to-accent/5': stat.color === 'accent',
+                'bg-gradient-to-br from-info/20 to-info/5': stat.color === 'info'
+              }"
+            >
+              <Icon
+                :name="stat.icon"
+                :class="[
+                  'w-7 h-7',
+                  stat.color === 'primary' ? 'text-primary' : '',
+                  stat.color === 'secondary' ? 'text-secondary' : '',
+                  stat.color === 'accent' ? 'text-accent' : '',
+                  stat.color === 'info' ? 'text-info' : ''
+                ]"
+              />
+            </div>
+            <div
+              class="text-3xl md:text-4xl font-bold mb-2"
+              :class="{
+                'text-primary': stat.color === 'primary',
+                'text-secondary': stat.color === 'secondary',
+                'text-accent': stat.color === 'accent',
+                'text-info': stat.color === 'info'
+              }"
+            >
+              {{ stat.value }}
+            </div>
+            <p class="text-sm text-[var(--text-muted)] font-medium">
+              {{ stat.label }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Values -->
-    <section class="py-20 md:py-32 mesh-gradient-dark">
+    <section class="py-12 md:py-16" :style="{ background: 'var(--bg-base)' }">
       <div class="container mx-auto px-4">
         <h2 class="text-3xl md:text-4xl font-bold text-[var(--text-primary)] text-center mb-12">Наши ценности</h2>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div
             v-for="(value, index) in values"
             :key="value.title"
-            class="glass-card p-6 rounded-2xl text-center opacity-0 animate-fade-in-up"
+            class="glass-card p-6 rounded-2xl text-center opacity-0 animate-fade-in-up hover:scale-105 transition-all duration-300"
             :class="`stagger-${index + 1}`"
           >
-            <div class="w-14 h-14 bg-gradient-to-br from-primary/20 to-secondary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <div class="w-14 h-14 bg-gradient-to-br from-primary/20 to-secondary/10 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
               <Icon :name="value.icon" class="w-7 h-7 text-primary" />
             </div>
             <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-2">{{ value.title }}</h3>
             <p class="text-[var(--text-muted)] text-sm">{{ value.description }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How to Join -->
+    <section class="py-12 md:py-16" :style="{ background: 'var(--bg-base)' }">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+          <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 mb-4">
+            <Icon name="heroicons:user-plus" class="w-4 h-4 text-primary" />
+            <span class="text-primary font-medium text-sm uppercase tracking-wider">Как вступить</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-4">
+            Стать участником просто
+          </h2>
+          <p class="text-lg text-[var(--text-muted)] max-w-2xl mx-auto">
+            Всего 6 простых шагов до вступления в сообщество
+          </p>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+          <div class="relative">
+            <!-- Vertical timeline line -->
+            <div class="hidden md:block absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/30 via-primary/50 to-primary/30"></div>
+            
+            <div class="space-y-8">
+              <div
+                v-for="(step, index) in joinSteps"
+                :key="step.title"
+                class="relative opacity-0 animate-fade-in-up"
+                :class="`stagger-${index + 1}`"
+              >
+                <!-- Timeline dot -->
+                <div class="hidden md:block absolute left-8 top-8 w-4 h-4 rounded-full bg-primary border-4 border-[var(--bg-base)] transform -translate-x-1/2 z-10 shadow-lg shadow-primary/30"></div>
+                
+                <!-- Content card -->
+                <div class="md:ml-20 glass-card rounded-2xl p-6 md:p-8 group hover:scale-[1.02] transition-all duration-300 relative overflow-hidden">
+                  <div class="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10"></div>
+                  
+                  <div class="flex flex-col md:flex-row items-start gap-6">
+                    <div class="flex-shrink-0">
+                      <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center group-hover:scale-110 group-hover:from-primary/30 group-hover:to-primary/10 transition-all duration-300">
+                        <Icon :name="step.icon" class="w-8 h-8 text-primary" />
+                      </div>
+                    </div>
+                    <div class="flex-1">
+                      <div class="flex items-center gap-3 mb-3">
+                        <span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20">
+                          Шаг {{ index + 1 }}
+                        </span>
+                        <h3 class="text-xl font-bold text-[var(--text-primary)] group-hover:text-primary transition-colors">
+                          {{ step.title }}
+                        </h3>
+                      </div>
+                      <p class="text-[var(--text-muted)] leading-relaxed">
+                        {{ step.description }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-12 md:py-16 mesh-gradient-dark relative overflow-hidden">
+      <div class="floating-shape w-[400px] h-[400px] bg-primary/10 -bottom-32 -right-32"></div>
+      
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-12">
+          <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 mb-4">
+            <Icon name="heroicons:question-mark-circle" class="w-4 h-4 text-primary" />
+            <span class="text-primary font-medium text-sm uppercase tracking-wider">Частые вопросы</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-4">
+            Ответы на популярные вопросы
+          </h2>
+        </div>
+
+        <div class="max-w-3xl mx-auto space-y-4">
+          <div
+            v-for="(item, index) in faqItems"
+            :key="index"
+            class="glass-card rounded-2xl overflow-hidden transition-all duration-300"
+            :class="activeFaq === index ? 'ring-2 ring-primary/50' : ''"
+          >
+            <button
+              @click="toggleFaq(index)"
+              class="w-full p-6 text-left flex items-center justify-between gap-4 group"
+            >
+              <span class="font-semibold text-[var(--text-primary)] group-hover:text-primary transition-colors">
+                {{ item.question }}
+              </span>
+              <Icon
+                :name="activeFaq === index ? 'heroicons:chevron-up' : 'heroicons:chevron-down'"
+                class="w-5 h-5 text-[var(--text-muted)] flex-shrink-0 transition-transform"
+                :class="activeFaq === index ? 'rotate-180' : ''"
+              />
+            </button>
+            <div
+              v-show="activeFaq === index"
+              class="px-6 pb-6 text-[var(--text-muted)] leading-relaxed animate-fade-in"
+            >
+              {{ item.answer }}
+            </div>
           </div>
         </div>
       </div>
@@ -161,10 +407,11 @@ const values = [
         </p>
         <NuxtLink
           to="/connect"
-          class="btn-accent inline-flex items-center gap-3 px-8 py-4 text-lg"
+          class="group btn-accent inline-flex items-center gap-3 px-8 py-4 text-lg relative overflow-hidden"
         >
-          <span>Вступить в сообщество</span>
-          <Icon name="heroicons:arrow-right" class="w-5 h-5" />
+          <span class="relative z-10">Вступить в сообщество</span>
+          <Icon name="heroicons:arrow-right" class="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" />
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
         </NuxtLink>
       </div>
     </section>

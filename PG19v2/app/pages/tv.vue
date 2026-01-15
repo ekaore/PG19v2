@@ -19,6 +19,40 @@ const channels = computed(() => {
 const totalChannels = computed(() => {
   return channels.value.reduce((sum, c) => sum + c.count, 0)
 })
+
+// FAQ
+const faqItems = [
+  {
+    question: 'На каких устройствах можно смотреть ТВ?',
+    answer: 'Телевидение доступно на Smart TV, ТВ-приставках, смартфонах, планшетах и компьютерах через приложение или веб-интерфейс.'
+  },
+  {
+    question: 'Как работает архив передач?',
+    answer: 'Вы можете просматривать передачи за последние 14 дней. Архив доступен для большинства каналов и обновляется автоматически.'
+  },
+  {
+    question: 'Нужна ли ТВ-приставка?',
+    answer: 'Приставка не обязательна, если у вас есть Smart TV или вы хотите смотреть на других устройствах. Приставка рекомендуется для лучшего качества и удобства.'
+  },
+  {
+    question: 'Можно ли смотреть несколько каналов одновременно?',
+    answer: 'Да, вы можете открыть несколько окон с разными каналами на разных устройствах одновременно.'
+  },
+  {
+    question: 'Как часто обновляется список каналов?',
+    answer: 'Список каналов регулярно обновляется. Новые каналы добавляются автоматически, о важных изменениях мы уведомляем участников сообщества.'
+  },
+  {
+    question: 'Есть ли родительский контроль?',
+    answer: 'Да, в настройках приставки и приложения можно настроить родительский контроль для ограничения доступа к определенным каналам.'
+  }
+]
+
+const activeFaq = ref<number | null>(null)
+
+function toggleFaq(index: number) {
+  activeFaq.value = activeFaq.value === index ? null : index
+}
 </script>
 
 <template>
@@ -87,7 +121,7 @@ const totalChannels = computed(() => {
           </p>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
           <div
             v-for="(item, index) in channels"
             :key="item.category"
@@ -96,7 +130,7 @@ const totalChannels = computed(() => {
           >
             <div class="flex items-center gap-3 mb-3">
               <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-secondary/20 to-secondary/5 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Icon :name="item.icon" class="w-5 h-5 text-secondary" />
+              <Icon :name="item.icon" class="w-5 h-5 text-secondary" />
               </div>
               <span class="text-3xl font-bold text-[var(--text-primary)] group-hover:text-secondary transition-colors">{{ item.count }}</span>
             </div>
@@ -129,7 +163,7 @@ const totalChannels = computed(() => {
     </section>
 
     <!-- Equipment -->
-    <section class="py-20 md:py-32 mesh-gradient-dark relative overflow-hidden">
+    <section class="py-16 mesh-gradient-dark relative overflow-hidden">
       <div class="floating-shape w-[400px] h-[400px] bg-secondary/10 -bottom-32 -right-32"></div>
       
       <div class="container mx-auto px-4 relative z-10">
@@ -202,6 +236,50 @@ const totalChannels = computed(() => {
                   <span>Можно использовать Smart TV или другую совместимую приставку</span>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-12 md:py-16" :style="{ background: 'var(--bg-base)' }">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+          <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 mb-4">
+            <Icon name="heroicons:question-mark-circle" class="w-4 h-4 text-secondary" />
+            <span class="text-secondary font-medium text-sm uppercase tracking-wider">Частые вопросы</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-4">
+            Ответы на популярные вопросы
+          </h2>
+        </div>
+
+        <div class="max-w-3xl mx-auto space-y-4">
+          <div
+            v-for="(item, index) in faqItems"
+            :key="index"
+            class="glass-card rounded-2xl overflow-hidden transition-all duration-300"
+            :class="activeFaq === index ? 'ring-2 ring-secondary/50' : ''"
+          >
+            <button
+              @click="toggleFaq(index)"
+              class="w-full p-6 text-left flex items-center justify-between gap-4 group"
+            >
+              <span class="font-semibold text-[var(--text-primary)] group-hover:text-secondary transition-colors">
+                {{ item.question }}
+              </span>
+              <Icon
+                :name="activeFaq === index ? 'heroicons:chevron-up' : 'heroicons:chevron-down'"
+                class="w-5 h-5 text-[var(--text-muted)] flex-shrink-0 transition-transform"
+                :class="activeFaq === index ? 'rotate-180' : ''"
+              />
+            </button>
+            <div
+              v-show="activeFaq === index"
+              class="px-6 pb-6 text-[var(--text-muted)] leading-relaxed animate-fade-in"
+            >
+              {{ item.answer }}
             </div>
           </div>
         </div>

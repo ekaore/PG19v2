@@ -153,8 +153,8 @@ const included = [
               <div class="mt-3 flex items-center justify-center gap-2">
                 <Icon name="heroicons:information-circle" class="w-4 h-4 text-[var(--text-muted)]" />
                 <p class="text-sm text-[var(--text-muted)]">
-                  Зависит от локации подключения
-                </p>
+                Зависит от локации подключения
+              </p>
               </div>
               <!-- Визуальная подсказка о выгоде -->
               <div class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20">
